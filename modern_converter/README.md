@@ -1,8 +1,8 @@
-# VB6 Modern Converter (C#)
+# VB6 Modern Converter (Python)
 
-This is now a **C# application** (not Python) for configuring and performing VB6 to C# / VB.NET conversion.
+A modernized VB6 converter that is simple to use and practical for real migration projects.
 
-## Quick start
+## 1-click style workflow
 
 ```bash
 cd modern_converter
@@ -10,48 +10,49 @@ cd modern_converter
 ./init_conversion.sh ../ ./converted csharp
 ```
 
-## Features
+- `install.sh` installs the tool in editable mode.
+- `init_conversion.sh` runs a full folder conversion and generates Visual Studio solution/project files.
 
-- C# console converter app built with .NET.
-- Converts `.bas`, `.frm`, `.cls` files.
-- Targets `csharp` or `vbnet`.
-- Supports rename customizations via config JSON:
+## Conversion highlights
+
+- Converts `.bas`, `.frm`, and `.cls` files.
+- Targets **C#** or **VB.NET**.
+- Wraps output into namespace/module/class structures for cleaner imports.
+- Generates Visual Studio-friendly `.sln` + `.csproj` / `.vbproj` (with `--create-vs-solution`).
+- Supports rename customization during conversion:
   - function names
   - variable names
-  - string literals
-- Generates Visual Studio-importable project + solution files during conversion.
+  - string literal values
 
-## Configuration example
+## Rename config
 
-Create `conversion.json`:
+Create `rename.json`:
 
 ```json
 {
-  "namespace": "Company.LegacyMigration",
-  "projectName": "MigratedApp",
-  "includeTodoComments": true,
-  "rename": {
-    "functionNames": { "OldSub": "NewSub" },
-    "variableNames": { "legacyValue": "modernValue" },
-    "stringLiterals": { "OLD": "NEW" }
-  }
+  "function_names": { "OldSub": "NewSub" },
+  "variable_names": { "legacyValue": "modernValue" },
+  "string_literals": { "Old Product": "New Product" }
 }
 ```
 
-Run:
+Run conversion:
 
 ```bash
-./init_conversion.sh ../ ./converted csharp ./conversion.json
+python -m vb6_converter.cli ../ ./converted \
+  --target csharp \
+  --rename-config ./rename.json \
+  --create-vs-solution \
+  --project-name MigratedApp \
+  --namespace Company.LegacyMigration
 ```
 
-## Manual run
+## Visual Studio 2026 import
+
+Open the generated `.sln` file in Visual Studio. The SDK-style project includes all converted source files with wildcard includes and modern project properties.
+
+## Quality
 
 ```bash
-dotnet run --project ./src/Vb6ModernConverter -- ../ ./converted --target vbnet --config ./conversion.json
-```
-
-## Test
-
-```bash
-dotnet test ./Vb6ModernConverter.sln
+python -m pytest -q
 ```
